@@ -1,0 +1,20 @@
+# Godot 4
+.godot/
+*.translation
+
+# Bản build — sinh lại được bằng lệnh export trong README
+build/
+
+# Thư mục rác Godot/driver tạo khi chạy với cwd nằm trong project
+# (hoặc khi thiếu biến APPDATA — xem mục "Tự build lại" trong README)
+Godot/
+NVIDIA Corporation/
+
+# Keystore — không bao giờ đưa khoá ký lên kho mã
+*.keystore
+*.jks
+release.keystore
+
+# Hệ điều hành
+Thumbs.db
+.DS_Store
