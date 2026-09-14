@@ -167,7 +167,7 @@ func _build_title() -> void:
 	top.add_child(spacer)
 
 	var title := Label.new()
-	title.text = "VORTEX ARENA"
+	title.text = "FORGEAX"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 74)
 	title.add_theme_color_override("font_color", Color(0.99, 0.98, 1.0))
@@ -502,12 +502,30 @@ func _build_champion() -> void:
 	var right_card := PanelContainer.new()
 	right_card.custom_minimum_size = Vector2(330, 0)
 	right_card.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	var right_sb := StyleBoxFlat.new()
-	right_sb.bg_color = Color(0.06, 0.07, 0.10, 0.92)
-	right_sb.border_color = Color(0.25, 0.30, 0.42, 0.8)
-	right_sb.set_border_width_all(2)
-	right_sb.set_corner_radius_all(10)
-	right_card.add_theme_stylebox_override("panel", right_sb)
+	# KHE CẮM ART: giấy da PNG cho panel chi tiết; thiếu ảnh thì dùng style
+	# kính tối như cũ, cả hai đường đều giữ chữ đọc được.
+	var parchment := ArtLibrary.ui_texture("panel_parchment")
+	if parchment != null:
+		var parchment_sb := StyleBoxTexture.new()
+		parchment_sb.texture = parchment
+		# Phủ lớp tối để chữ trắng vẫn nổi trên nền giấy sáng.
+		parchment_sb.modulate_color = Color(0.32, 0.30, 0.38, 0.94)
+		parchment_sb.texture_margin_left = 14.0
+		parchment_sb.texture_margin_right = 14.0
+		parchment_sb.texture_margin_top = 12.0
+		parchment_sb.texture_margin_bottom = 12.0
+		parchment_sb.content_margin_left = 4.0
+		parchment_sb.content_margin_right = 4.0
+		parchment_sb.content_margin_top = 4.0
+		parchment_sb.content_margin_bottom = 4.0
+		right_card.add_theme_stylebox_override("panel", parchment_sb)
+	else:
+		var right_sb := StyleBoxFlat.new()
+		right_sb.bg_color = Color(0.06, 0.07, 0.10, 0.92)
+		right_sb.border_color = Color(0.25, 0.30, 0.42, 0.8)
+		right_sb.set_border_width_all(2)
+		right_sb.set_corner_radius_all(10)
+		right_card.add_theme_stylebox_override("panel", right_sb)
 	main.add_child(right_card)
 
 	var right_margin := MarginContainer.new()
@@ -846,12 +864,25 @@ func _skill_row(s: SkillBase, key_text: String) -> Control:
 	var chip := PanelContainer.new()
 	chip.custom_minimum_size = Vector2(60, 34)
 	chip.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	var chip_sb := StyleBoxFlat.new()
-	chip_sb.bg_color = Color(s.icon_color.r * 0.2, s.icon_color.g * 0.2,
-		s.icon_color.b * 0.2, 1.0)
-	chip_sb.border_color = s.icon_color
-	chip_sb.set_border_width_all(1)
-	chip_sb.set_corner_radius_all(9)
+	var slot_texture := ArtLibrary.ui_texture("skill_slot")
+	var chip_sb: StyleBox
+	if slot_texture != null:
+		var textured_sb := StyleBoxTexture.new()
+		textured_sb.texture = slot_texture
+		textured_sb.modulate_color = Color(1, 1, 1, 0.82)
+		textured_sb.texture_margin_left = 8.0
+		textured_sb.texture_margin_right = 8.0
+		textured_sb.texture_margin_top = 6.0
+		textured_sb.texture_margin_bottom = 6.0
+		chip_sb = textured_sb
+	else:
+		var fallback_sb := StyleBoxFlat.new()
+		fallback_sb.bg_color = Color(s.icon_color.r * 0.2, s.icon_color.g * 0.2,
+			s.icon_color.b * 0.2, 1.0)
+		fallback_sb.border_color = s.icon_color
+		fallback_sb.set_border_width_all(1)
+		fallback_sb.set_corner_radius_all(9)
+		chip_sb = fallback_sb
 	chip.add_theme_stylebox_override("panel", chip_sb)
 	var chip_lbl := Label.new()
 	chip_lbl.text = key_text
@@ -999,6 +1030,15 @@ func _label(text: String, font_size: int, color: Color) -> Label:
 
 func _screen_title(title: String, subtitle: String) -> Control:
 	var box := VBoxContainer.new()
+	var ribbon := ArtLibrary.ui_texture("title_ribbon")
+	if ribbon != null:
+		var banner := TextureRect.new()
+		banner.texture = ribbon
+		banner.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		banner.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		banner.custom_minimum_size = Vector2(0, 42)
+		banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		box.add_child(banner)
 	box.add_theme_constant_override("separation", 1)
 	var t := Label.new()
 	t.text = title
@@ -1011,6 +1051,8 @@ func _screen_title(title: String, subtitle: String) -> Control:
 ## Nút lớn dùng ở màn tiêu đề và màn chọn tướng: tiêu đề đậm + dòng phụ nhỏ.
 func _big_button(title: String, subtitle: String, tint: Color, height: int) -> Button:
 	var b := Button.new()
+	var normal_texture := ArtLibrary.ui_texture("button_normal")
+	var hover_texture := ArtLibrary.ui_texture("button_hover")
 	b.text = "%s\n%s" % [title, subtitle]
 	b.custom_minimum_size = Vector2(0, height)
 	b.add_theme_font_size_override("font_size", 18)
@@ -1031,13 +1073,33 @@ func _big_button(title: String, subtitle: String, tint: Color, height: int) -> B
 	sb.shadow_color = Color(0, 0, 0, 0.55)
 	sb.shadow_size = 6
 	sb.shadow_offset = Vector2(0, 4)
-	b.add_theme_stylebox_override("normal", sb)
+	if normal_texture != null:
+		var textured_normal := StyleBoxTexture.new()
+		textured_normal.texture = normal_texture
+		textured_normal.modulate_color = Color(1, 1, 1, 0.96)
+		textured_normal.texture_margin_left = 14.0
+		textured_normal.texture_margin_right = 14.0
+		textured_normal.texture_margin_top = 10.0
+		textured_normal.texture_margin_bottom = 10.0
+		b.add_theme_stylebox_override("normal", textured_normal)
+	else:
+		b.add_theme_stylebox_override("normal", sb)
 	var hover := sb.duplicate() as StyleBoxFlat
 	hover.bg_color = Color(tint.r * 0.32, tint.g * 0.32, tint.b * 0.32, 1.0)
 	hover.border_color = Color(tint.r, tint.g, tint.b, 1.0)
 	hover.shadow_color = Color(tint.r, tint.g, tint.b, 0.4)
 	hover.shadow_size = 10
-	b.add_theme_stylebox_override("hover", hover)
+	if hover_texture != null:
+		var textured_hover := StyleBoxTexture.new()
+		textured_hover.texture = hover_texture
+		textured_hover.modulate_color = Color(1, 1, 1, 1.0)
+		textured_hover.texture_margin_left = 14.0
+		textured_hover.texture_margin_right = 14.0
+		textured_hover.texture_margin_top = 10.0
+		textured_hover.texture_margin_bottom = 10.0
+		b.add_theme_stylebox_override("hover", textured_hover)
+	else:
+		b.add_theme_stylebox_override("hover", hover)
 	var pressed := sb.duplicate() as StyleBoxFlat
 	# Nhấn xuống: nút "lún" vào — mất shadow, nền tối đi.
 	pressed.bg_color = Color(tint.r * 0.10, tint.g * 0.10, tint.b * 0.10, 1.0)

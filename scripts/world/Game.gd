@@ -772,6 +772,12 @@ func hitstop(ms: int) -> void:
 		_hitstop_until_ms = target
 		Engine.time_scale = 0.08
 
+## Rung thêm do skill chủ động gọi (ultimate, cú nổ lớn). VFXLibrary.ult_shake
+## tìm hàm này qua current_scene — tách riêng khỏi _on_champion_damaged để
+## đòn không trúng ai vẫn rung đúng "cảm giác niệm phép".
+func add_shake(amount: float) -> void:
+	_shake = minf(12.0, _shake + amount * Settings.screen_shake)
+
 func _tick_hitstop() -> void:
 	if _hitstop_until_ms <= 0:
 		return

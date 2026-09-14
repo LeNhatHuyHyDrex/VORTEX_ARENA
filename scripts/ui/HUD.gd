@@ -27,6 +27,7 @@ var _practice_rects: Array[Rect2] = []
 var _practice_buttons: Array[Rect2] = []
 ## Vùng bấm của nút tạm dừng ở góc trên phải.
 var _pause_rect := Rect2()
+var _skill_slot_texture: Texture2D = null
 
 ## Hiệu ứng flash màn hình khi bị đánh — độ sáng (0-1) và hướng màu.
 var _damage_flash := 0.0
@@ -48,6 +49,7 @@ func _ready() -> void:
 	# PASS chứ không IGNORE: bảng luyện tập cần nhận cú bấm, nhưng phần còn lại
 	# của HUD thì phải để sự kiện đi qua cho game xử lý.
 	mouse_filter = Control.MOUSE_FILTER_PASS
+	_skill_slot_texture = ArtLibrary.ui_texture("skill_slot")
 
 func _process(delta: float) -> void:
 	_damage_flash = maxf(0.0, _damage_flash - delta * 3.5)
@@ -541,8 +543,11 @@ func _draw_skill_icon(s: SkillBase, pos: Vector2, w: float, key_label: String,
 	var ready := reason == ""
 	var cd := s.cooldown_ratio()
 
-	# Nền: tối, rồi phủ màu chiêu với độ đậm theo trạng thái.
-	_round_rect(rect, ICON_RADIUS, Color(0.06, 0.06, 0.09, 0.92))
+	# Nền slot raster tùy chọn; nếu thiếu ảnh thì vẫn giữ style vector hiện tại.
+	if _skill_slot_texture != null:
+		draw_texture_rect(_skill_slot_texture, rect, false, Color(1, 1, 1, 0.88 if ready else 0.62))
+	else:
+		_round_rect(rect, ICON_RADIUS, Color(0.06, 0.06, 0.09, 0.92))
 	_round_rect(rect, ICON_RADIUS, Color(col.r, col.g, col.b, 0.20 if ready else 0.08))
 	# Vát ánh sáng: bóng kính nửa trên + nét đổ tối sát đáy — ô đọc như viên
 	# kim loại đúc lõm vào khay, ánh sáng rọi từ trên xuống.

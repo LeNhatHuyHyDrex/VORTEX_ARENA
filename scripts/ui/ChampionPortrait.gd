@@ -23,6 +23,10 @@ var compact := false     # thu nhỏ: bỏ khung tên, chỉ còn hình
 ## Nhịp hoạt ảnh, chạy liên tục để icon "thở" chứ không đứng im.
 var _t := 0.0
 
+## Khung thẻ PNG tùy chọn (ui/card_frame). Có ảnh thì phủ khung trang trí,
+## không có thì rơi về khung vector bên dưới — thêm art không vỡ gì cả.
+var _frame_texture: Texture2D = null
+
 ## Màu chủ đạo của từng tướng, lấy từ bảng màu chung với nhân vật ngoài sân.
 func accent() -> Color:
 	return GameData.champion_color(champion_id)
@@ -32,6 +36,10 @@ func palette() -> Dictionary:
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	# Cắt phần tràn: ảnh thẻ vẽ theo kiểu "cover" nên mép ảnh có thể vượt khung,
+	# không cắt thì nó tràn sang thẻ bên cạnh trong lưới.
+	clip_contents = true
+	_frame_texture = ArtLibrary.ui_texture("card_frame")
 	mouse_entered.connect(func() -> void: hovered = true)
 	mouse_exited.connect(func() -> void: hovered = false)
 
@@ -51,6 +59,16 @@ func _draw() -> void:
 	var col := accent()
 	var p := palette()
 
+	# KHE CẮM ASSET: có ảnh thẻ vẽ sẵn cho tướng này thì dùng ảnh, không thì rơi
+	# về bộ vẽ vector bên dưới. Nhờ vậy nâng cấp art từng tướng một vẫn an toàn.
+	var art := ArtLibrary.card_texture(champion_id)
+	if art != null:
+		_draw_card_art(art)
+		_draw_frame(col)
+		if not compact:
+			_draw_nameplate(col)
+		return
+
 	_draw_frame(col)
 	# Gốc toạ độ: đáy trung tâm, trục y âm hướng lên.
 	draw_set_transform(Vector2(size.x * 0.5, size.y * 0.99), 0.0, Vector2(s, s))
@@ -68,6 +86,19 @@ func _draw() -> void:
 	if not compact:
 		_draw_nameplate(col)
 
+## Vẽ ảnh thẻ tướng (asset raster) theo kiểu "cover" — lấp kín khung mà không
+## bóp méo hình. Chừa 3px để khung chọn/hover vẫn nhìn thấy phía trên.
+func _draw_card_art(tex: Texture2D) -> void:
+	var ts := tex.get_size()
+	if ts.x <= 0.0 or ts.y <= 0.0:
+		return
+	var pad := 3.0
+	var box := Rect2(Vector2(pad, pad), size - Vector2(pad * 2.0, pad * 2.0))
+	var scale := maxf(box.size.x / ts.x, box.size.y / ts.y)
+	var dsize := ts * scale
+	var pos := box.position + (box.size - dsize) * 0.5
+	draw_texture_rect(tex, Rect2(pos, dsize), false)
+
 # ------------------------------------------------------------------ các phần
 
 func _draw_frame(col: Color) -> void:
@@ -82,6 +113,18 @@ func _draw_frame(col: Color) -> void:
 		sb.set_border_width_all(3 if selected else 2)
 	sb.set_corner_radius_all(12)
 	sb.draw(get_canvas_item(), Rect2(Vector2.ZERO, size))
+
+	# KHE CẮM ART: khung PNG trang trí phủ đè lên khung vector. Trạng thái
+	# chọn/hover vẫn hiện qua lớp viền màu phía trên (nền trong suốt).
+	if _frame_texture != null:
+		var tint := Color(1, 1, 1, 1.0 if selected else (0.92 if hovered else 0.8))
+		draw_texture_rect(_frame_texture, Rect2(Vector2.ZERO, size), false, tint)
+		var border_only := StyleBoxFlat.new()
+		border_only.bg_color = Color(0, 0, 0, 0)
+		border_only.border_color = sb.border_color
+		border_only.set_border_width_all(3 if (selected or bot_selected) else 1)
+		border_only.set_corner_radius_all(12)
+		border_only.draw(get_canvas_item(), Rect2(Vector2.ZERO, size))
 
 func _draw_glow(col: Color) -> void:
 	var pulse := 0.16 + sin(_t * 1.9) * 0.05

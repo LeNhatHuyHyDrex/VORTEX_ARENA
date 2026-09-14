@@ -1,0 +1,72 @@
+{
+ "fx10_blackExplosion": {
+  "cols": 5,
+  "rows": 4,
+  "count": 19,
+  "fw": 50,
+  "fh": 47
+ },
+ "fx1_blue_topEffect": {
+  "cols": 5,
+  "rows": 5,
+  "count": 22,
+  "fw": 98,
+  "fh": 203
+ },
+ "fx2_swordFire": {
+  "cols": 5,
+  "rows": 7,
+  "count": 35,
+  "fw": 186,
+  "fh": 83
+ },
+ "fx3_fireBall": {
+  "cols": 5,
+  "rows": 4,
+  "count": 20,
+  "fw": 184,
+  "fh": 85
+ },
+ "fx4_sign_of_fire": {
+  "cols": 5,
+  "rows": 4,
+  "count": 20,
+  "fw": 177,
+  "fh": 156
+ },
+ "fx5_fire_scissors": {
+  "cols": 5,
+  "rows": 3,
+  "count": 13,
+  "fw": 133,
+  "fh": 169
+ },
+ "fx6_eaterFire": {
+  "cols": 5,
+  "rows": 4,
+  "count": 20,
+  "fw": 168,
+  "fh": 148
+ },
+ "fx7_energyBall": {
+  "cols": 5,
+  "rows": 7,
+  "count": 32,
+  "fw": 80,
+  "fh": 67
+ },
+ "fx8_lighteningBall": {
+  "cols": 5,
+  "rows": 4,
+  "count": 20,
+  "fw": 56,
+  "fh": 65
+ },
+ "fx9_rainOnGround": {
+  "cols": 5,
+  "rows": 6,
+  "count": 30,
+  "fw": 65,
+  "fh": 63
+ }
+}

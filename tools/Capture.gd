@@ -81,6 +81,9 @@ var _shots: Array = [
 		"before_load": "_solo"},
 	{"scene": "res://scenes/Game.tscn", "wait": 1.2, "name": "33_victory_banner",
 		"before_load": "_solo", "after_load": "_force_match_end"},
+	# --- Đợt khe cắm asset: thẻ tướng mặc định (Hỏa Pháp Sư) ---
+	{"scene": "res://scenes/MainMenu.tscn", "wait": 2.2, "name": "34_champ_default",
+		"after_load": "_open_champ_default"},
 ]
 
 func _ready() -> void:
@@ -250,15 +253,28 @@ func _arm_ult(scene: Node) -> void:
 
 var _touch_was_on := false
 
+## Nạp autoload Settings theo đường dẫn node thay vì định danh tĩnh.
+## Vì sao: chế độ `--script` KHÔNG nạp autoload, tham chiếu tĩnh `Settings`
+## làm script fail compile ngay từ đầu — trước đó cả bộ chụp ảnh không chạy nổi.
+func _settings_node() -> Node:
+	var root := get_tree().root
+	return root.get_node_or_null("Settings")
+
 func _practice_touch() -> void:
-	_touch_was_on = Settings.show_touch_controls
-	Settings.show_touch_controls = true
+	var s := _settings_node()
+	if s == null:
+		return
+	_touch_was_on = s.show_touch_controls
+	s.show_touch_controls = true
 	Game.pending_mode = GameData.Mode.PRACTICE
 	Game.pending_champion = &"frost_maiden"
 
 func _restore_settings() -> void:
-	Settings.show_touch_controls = _touch_was_on
-	Settings.save_settings()
+	var s := _settings_node()
+	if s == null:
+		return
+	s.show_touch_controls = _touch_was_on
+	s.save_settings()
 
 ## Lên đạn một chiêu theo hướng (ô 0 = Hỏa Cầu) và trỏ về phía đối thủ.
 func _arm_direction(scene: Node) -> void:
@@ -367,6 +383,12 @@ func _force_match_end(scene: Node) -> void:
 		g.stats_max_combo = 14
 		g.stats_rounds_won = 3
 		g.current_round = 5
+
+## Mở màn chọn tướng mà KHÔNG chọn ai — để thấy thẻ mặc định (Hỏa Pháp Sư)
+## cùng khe cắm ảnh asset nếu đã có file trong assets/art/.
+func _open_champ_default(scene: Node) -> void:
+	if scene.has_method("_show"):
+		scene._show(3)
 
 # --------------------------------------------------------------- chụp
 

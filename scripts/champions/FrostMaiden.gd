@@ -139,6 +139,8 @@ class FrostNova extends SkillBase:
 		Audio.play_at(&"ice_nova", caster.global_position)
 		if caster.world != null and "fx" in caster.world:
 			VFXLibrary.ice_spikes(caster.world.fx, caster.global_position, RADIUS * 0.75)
+			# Lớp pack: hoa băng nở + sương lạnh (tách khỏi ice_spikes vector).
+			VFXLibrary.ice_bloom(caster.world.fx, caster.global_position, RADIUS, 0)
 		caster.spawn_effect({
 			"kind": &"explosion",
 			"position": caster.global_position,
@@ -257,6 +259,10 @@ class AbsoluteZero extends SkillBase:
 
 	func execute(_aim: Vector2) -> void:
 		Audio.play_at(&"freeze", caster.global_position)
+		if caster.world != null and "fx" in caster.world:
+			# ULT băng: hoa băng lớn + bão tuyết + sóng kép + rung màn hình.
+			VFXLibrary.ice_bloom(caster.world.fx, caster.global_position, RADIUS, 1)
+			VFXLibrary.ult_shake(self, 6.5)
 		caster.spawn_effect({
 			"kind": &"explosion",
 			"position": caster.global_position,

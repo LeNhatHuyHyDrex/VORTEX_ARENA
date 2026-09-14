@@ -14,7 +14,7 @@ extends Node
 const RATE := 22050
 const POOL_SIZE := 20
 
-var _bank: Dictionary = {}                 # tên -> AudioStreamWAV
+var _bank: Dictionary = {}                 # tên -> AudioStream (WAV synth hoặc ogg pack)
 var _players: Array[AudioStreamPlayer] = []
 var _next := 0
 var _ambient: AudioStreamPlayer = null
@@ -35,7 +35,9 @@ func _ready() -> void:
 
 ## Phát một hiệu ứng, không gắn với vị trí.
 func play(sound: StringName, volume_db: float = 0.0, pitch: float = 1.0) -> void:
-	var stream: AudioStreamWAV = _bank.get(sound)
+	# AudioStream (không còn AudioStreamWAV) vì bank giờ chứa cả ogg thật
+	# từ pack SFX lẫn tiếng synth tự sinh.
+	var stream: AudioStream = _bank.get(sound)
 	if stream == null:
 		return
 	var p := _players[_next]
@@ -203,7 +205,57 @@ func _build_bank() -> void:
 		_decay(_osc(0.16, 320.0, 1900.0, OSC_SINE, 0.24, 0.7), 2.0),
 		_decay(_osc(0.12, 1900.0, 420.0, OSC_SINE, 0.18, 1.3), 2.6)))
 
+	# --- Pack SFX thật (80 CC0 RPG SFX, opengameart) ---
+	# Nạp ogg từ res://assets/audio/rpg_sfx/ rồi ĐÈ lên các key tổng hợp cùng
+	# tên. Thư mục không có (build thiếu asset) thì giữ nguyên tiếng synth —
+	# game vẫn có âm thanh, chỉ là kém "thật" hơn.
+	_override_bank_from_pack()
+
 # ------------------------------------------------------------------ tổng hợp
+
+## Bản đồ key -> file ogg trong pack 80 CC0 RPG SFX. Chọn theo "chất" nghe
+## gần nhất: lửa dùng spell_fire, băng dùng spell, bóng tối dùng chain (tiếng
+## kim loại kéo dài), sét dùng stones (tiếng nổ trầm), ...
+const _SFX_PACK_DIR := "res://assets/audio/rpg_sfx/"
+const _SFX_OVERRIDES := {
+	&"fireball": "spell_fire_01.ogg",
+	&"firewall": "spell_fire_02.ogg",
+	&"dash_fire": "spell_fire_03.ogg",
+	&"fireball_burn": "spell_fire_04.ogg",
+	&"detonate": "spell_fire_05.ogg",
+	&"ice_shard": "spell_01.ogg",
+	&"ice_nova": "spell_02.ogg",
+	&"freeze": "item_gem_01.ogg",
+	&"shadow_bolt": "chain_01.ogg",
+	&"teleport": "chain_02.ogg",
+	&"blink": "chain_03.ogg",
+	&"thunder": "stones_01.ogg",
+	&"stone_throw": "stones_02.ogg",
+	&"stone_wall": "stones_03.ogg",
+	&"slash": "blade_01.ogg",
+	&"slash_crit": "blade_02.ogg",
+	&"hit": "blade_03.ogg",
+	&"hit_big": "creature_hurt_01.ogg",
+	&"death": "creature_die_01.ogg",
+	&"clash": "metal_01.ogg",
+	&"execute": "metal_02.ogg",
+	&"shield": "metal_03.ogg",
+	&"mark": "book_01.ogg",
+	&"heal": "book_02.ogg",
+	&"void_blast": "misc_01.ogg",
+	&"void_bolt": "misc_02.ogg",
+	&"void_collapse": "misc_03.ogg",
+	&"black_hole": "misc_04.ogg",
+}
+
+func _override_bank_from_pack() -> void:
+	for key: StringName in _SFX_OVERRIDES:
+		var path := _SFX_PACK_DIR + String(_SFX_OVERRIDES[key])
+		if not ResourceLoader.exists(path):
+			continue
+		var stream := load(path) as AudioStream
+		if stream != null:
+			_bank[key] = stream
 
 const OSC_SINE := 0
 const OSC_SQUARE := 1

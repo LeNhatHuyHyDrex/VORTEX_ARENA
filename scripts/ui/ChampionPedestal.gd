@@ -5,6 +5,7 @@ extends Control
 var champion_id: StringName = &"fire_mage"
 var _champ: Champion = null
 var _t: float = 0.0
+var _pedestal_texture: Texture2D = null
 
 ## Bảng hạt phát sáng lơ lửng quanh bệ
 var _particles: Array[Dictionary] = []
@@ -14,6 +15,7 @@ func _ready() -> void:
 	custom_minimum_size = Vector2(240, 290)
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_init_particles()
+	_pedestal_texture = ArtLibrary.ui_texture("pedestal")
 	_update_champion()
 
 func _init_particles() -> void:
@@ -77,10 +79,10 @@ func _draw() -> void:
 	_draw_ellipse(center + Vector2(0, 15), 110, 36, Color(col.r, col.g, col.b, pulse * 0.5))
 	_draw_ellipse(center + Vector2(0, 15), 85, 26, Color(col.r, col.g, col.b, pulse))
 
-	# 2. Tầng đáy bệ đá (Dark Stone Base)
+	# 3. Tầng đáy bệ đá (Dark Stone Base)
 	_draw_cylinder(center + Vector2(0, 24), 92, 32, 16, Color(0.12, 0.11, 0.15), Color(0.08, 0.07, 0.10))
 
-	# 3. Tầng thân bệ đá chạm khắc hoa văn (Carved Middle Tier)
+	# 4. Tầng thân bệ đá chạm khắc hoa văn (Carved Middle Tier)
 	_draw_cylinder(center + Vector2(0, 10), 80, 27, 14, Color(0.18, 0.17, 0.22), Color(0.13, 0.12, 0.16))
 
 	# Các rãnh ma thuật trên thân bệ
@@ -104,7 +106,18 @@ func _draw() -> void:
 	# 6. Huy hiệu nguyên tố phía trước bệ đá (Front Medallion Crest)
 	_draw_front_crest(center + Vector2(0, 28), col)
 
-	# 7. Hạt năng lượng nguyên tố bay lơ lửng
+	# 7. Lớp art PNG tùy chọn phủ lên thân bệ đã vẽ vector.
+	# Ảnh được giới hạn trong vùng bệ để không che champion preview.
+	if _pedestal_texture != null:
+		var tex_size := _pedestal_texture.get_size()
+		if tex_size.x > 1.0 and tex_size.y > 1.0:
+			var target := Vector2(184.0, 86.0)
+			var tex_scale := minf(target.x / tex_size.x, target.y / tex_size.y)
+			var draw_size := tex_size * tex_scale
+			var tex_rect := Rect2(center + Vector2(-draw_size.x * 0.5, 10.0 - draw_size.y * 0.5), draw_size)
+			draw_texture_rect(_pedestal_texture, tex_rect, false, Color(1, 1, 1, 0.9))
+
+	# 8. Hạt năng lượng nguyên tố bay lơ lửng
 	for p in _particles:
 		var life_f: float = float(p["life"])
 		var max_life_f: float = float(p["max_life"])

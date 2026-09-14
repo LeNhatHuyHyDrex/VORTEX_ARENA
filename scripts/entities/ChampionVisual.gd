@@ -191,6 +191,15 @@ func _draw() -> void:
 	_draw_team_ring()
 	_draw_shadow(p)
 	_draw_aim_indicator(p, flip)
+	# KHE CẮM ASSET: có ảnh nhân vật vẽ sẵn thì dùng ảnh thay cả cụm thân/cape/
+	# chân/đầu/vũ khí; chưa có thì vẽ vector như cũ. Các lớp mang thông tin
+	# ĐỌC TRẬN ĐẤU (bệ đá, vòng phe, bóng đổ, chỉ hướng ngắm, cú vung chiêu)
+	# luôn được giữ lại vì chúng không phải trang trí.
+	var body_art := ArtLibrary.body_texture(champion.champion_id)
+	if body_art != null:
+		_draw_body_art(body_art, flip, bob)
+		_draw_cast_swing(p, flip)
+		return
 	_draw_cape(p, flip, t, speed_ratio)
 	_draw_legs(p, flip, speed_ratio, t)
 	_draw_body(p, flip, bob)
@@ -319,6 +328,28 @@ func _draw_legs(p: Dictionary, flip: float, speed_ratio: float, t: float) -> voi
 		Vector2(2 * flip, -14), Vector2(7 * flip, -14),
 		Vector2(8 * flip - swing * flip, 1), Vector2(2 * flip - swing * flip, 1),
 	]), dark)
+
+## Chiều cao nhân vật mong muốn khi dùng ảnh asset, tính theo đơn vị vẽ
+## (gốc = chân). Khớp với bản vector (~62-66) để bóng đổ và tầm đánh vẫn đúng.
+const BODY_ART_HEIGHT := 64.0
+
+## Vẽ nhân vật bằng ảnh asset. Ảnh neo ở CHÂN (đáy ảnh = mặt đất) — cùng quy
+## ước với bản vector, nên bóng đổ, bệ đá và tâm va chạm không cần đổi gì.
+func _draw_body_art(tex: Texture2D, flip: float, bob: float) -> void:
+	var ts := tex.get_size()
+	if ts.x <= 0.0 or ts.y <= 0.0:
+		return
+	var k := BODY_ART_HEIGHT / ts.y
+	var dsize := Vector2(ts.x * k, ts.y * k)
+	var rect := Rect2(Vector2(-dsize.x * 0.5, -dsize.y + bob), dsize)
+	if flip < 0.0:
+		# Lật ngang: đổi dấu trục x quanh gốc (chân nhân vật), rồi trả transform
+		# về đúng hệ số vẽ chung để các lớp sau không bị lệch.
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2(-DRAW_SCALE, DRAW_SCALE))
+		draw_texture_rect(tex, rect, false)
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2(DRAW_SCALE, DRAW_SCALE))
+	else:
+		draw_texture_rect(tex, rect, false)
 
 func _draw_body(p: Dictionary, flip: float, bob: float) -> void:
 	var cloak: Color = p["cloak"]

@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="VORTEX ARENA"
+config/name="FORGEAX"
 config/description="Game đối kháng 1v1 góc nhìn từ trên xuống. Mỗi tướng có bộ kỹ năng
 tương tác với nhau để người chơi tự sáng tạo combo. Hỗ trợ LAN."
 config/version="0.1.0"
