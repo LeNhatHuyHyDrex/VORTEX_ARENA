@@ -41,14 +41,36 @@ func _draw() -> void:
 	var r := Rect2(Vector2(2, 2), size - Vector2(4, 4))
 	var lift := 1.0 if _hover else 0.0
 
+	# Thẻ đúc nổi: viền đáy dày (vát 3D) + shadow trượt xuống + bo góc lớn hơn.
+	# Hover: thẻ "nâng lên" — shadow sâu hơn, nền sáng hơn, viền đậm hơn.
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(tint.r * (0.20 + lift * 0.10), tint.g * (0.20 + lift * 0.10),
 		tint.b * (0.20 + lift * 0.10), 1.0)
 	sb.border_color = Color(tint.r, tint.g, tint.b, 1.0 if _hover else 0.62)
 	sb.set_border_width_all(2 if _hover else 1)
-	sb.set_corner_radius_all(10)
+	sb.border_width_bottom = 4
+	sb.set_corner_radius_all(12)
 	sb.content_margin_left = 14
+	sb.shadow_color = Color(0, 0, 0, 0.5 + lift * 0.15)
+	sb.shadow_size = 4.0 + lift * 5.0
+	sb.shadow_offset = Vector2(0, 3 + lift * 2)
 	sb.draw(get_canvas_item(), r)
+
+	# Bóng kính nửa trên thẻ — ánh sáng rọi từ trên, cùng hướng với mọi panel.
+	var pts := PackedVector2Array()
+	var gr := Rect2(r.position + Vector2(3, 3), Vector2(r.size.x - 6, r.size.y * 0.42))
+	var g_r := 9.0
+	for s in range(7):
+		var a: float = PI + (PI * 0.5) * float(s) / 6.0
+		pts.append(Vector2(gr.position.x + g_r, gr.position.y + g_r)
+			+ Vector2(cos(a), sin(a)) * g_r)
+	for s in range(7):
+		var a: float = PI * 1.5 + (PI * 0.5) * float(s) / 6.0
+		pts.append(Vector2(gr.end.x - g_r, gr.position.y + g_r)
+			+ Vector2(cos(a), sin(a)) * g_r)
+	pts.append(Vector2(gr.end.x, gr.end.y))
+	pts.append(Vector2(gr.position.x, gr.end.y))
+	draw_colored_polygon(pts, Color(1, 1, 1, 0.05 + lift * 0.03))
 
 	if _hover:
 		# Viền sáng mờ chạy dọc mép trái, gợi ý "thẻ này đang được trỏ".
