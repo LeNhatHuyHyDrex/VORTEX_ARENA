@@ -933,10 +933,14 @@ func _cast_type_label(cast_type: int) -> String:
 	match cast_type:
 		SkillBase.CastType.GROUND:
 			return "chọn vùng"
+		SkillBase.CastType.DIRECTION:
+			return "theo hướng"
 		SkillBase.CastType.SELF:
 			return "quanh người"
 		SkillBase.CastType.INSTANT:
 			return "bấm là ra"
+		_:
+			return ""
 		_:
 			return "theo hướng"
 

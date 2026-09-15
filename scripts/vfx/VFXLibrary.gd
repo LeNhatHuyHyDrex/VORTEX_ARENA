@@ -211,10 +211,19 @@ static func dust_impact(parent: Node, pos: Vector2, scale_px: float = 1.0) -> vo
 
 ## RUNG MÀN HÌNH cho ultimate — gọi từ skill, tìm Game qua scene hiện tại.
 ## Game tự giới hạn theo Settings.screen_shake nên không cần kiểm tra ở đây.
-static func ult_shake(from_node: Node, strength: float = 7.0) -> void:
-	if from_node == null or from_node.get_tree() == null:
+## `from_node` nhận cả Node lẫn SkillBase (RefCounted): nếu là skill thì tra
+## theo thuộc tính `caster` của nó — skill không phải Node nên không gọi trực tiếp.
+static func ult_shake(from_node: Variant, strength: float = 7.0) -> void:
+	var node: Node = null
+	if from_node is Node:
+		node = from_node
+	elif from_node != null:
+		var caster_v: Variant = from_node.get("caster")
+		if caster_v is Node:
+			node = caster_v
+	if node == null or node.get_tree() == null:
 		return
-	var scene := from_node.get_tree().current_scene
+	var scene := node.get_tree().current_scene
 	if scene != null and scene.has_method("add_shake"):
 		scene.add_shake(strength)
 

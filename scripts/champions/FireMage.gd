@@ -95,6 +95,11 @@ class Fireball extends SkillBase:
 			"accent": Color("ff7a2f"),
 		})
 		Audio.play_at(&"fireball", caster.global_position)
+		# Lớp niệm chiêu: lóe cam ngắn tại tay Staff — mỗi skill lửa đều có
+		# "khởi động" riêng trước khi đạn bay.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx, caster.global_position + aim.normalized() * 26.0,
+				Color(1.0, 0.55, 0.2))
 
 
 # ============================================================== W — TƯỜNG LỬA
@@ -139,6 +144,8 @@ class FlameWall extends SkillBase:
 		# Cột lửa phun lên khi tường lửa thành hình — cảm giác vùng cháy thật sự
 		# bùng lên thay vì chỉ có vòng sáng nằm im trên sàn.
 		VFXLibrary.fire_eruption(caster.world.fx, center, ZONE_RADIUS * 0.55)
+		# Lớp pack: dấu vòng lửa khắc trên đất + lửa hút vào tâm vùng.
+		VFXLibrary.fire_ground(caster.world.fx, center, ZONE_RADIUS)
 		Audio.play_at(&"firewall", center)
 
 
@@ -169,6 +176,10 @@ class BlazeDash extends SkillBase:
 		Audio.play_at(&"dash_fire", start)
 		# Vệt lửa bùng theo đường lướt.
 		VFXLibrary.fire_eruption(caster.world.fx, start + dir * DASH_REACH * 0.5, 40.0)
+		# Lớp pack: chém lửa theo đúng góc dash — vệt lửa có "hướng", không phải
+		# một cột đứng im giữa đường.
+		VFXLibrary.fire_slash(caster.world.fx, start.lerp(end, 0.5),
+			rad_to_deg(dir.angle()), 1.15)
 
 		# Vệt lửa dọc đường lướt — biến đường lướt thành công cụ kiểm soát khu vực.
 		for i in range(5):
@@ -260,6 +271,11 @@ class Detonate extends SkillBase:
 
 	func execute(_aim: Vector2) -> void:
 		Audio.play_at(&"detonate", caster.global_position)
+		if caster.world != null and "fx" in caster.world:
+			# ULT Hỏa: nổ cầu lửa nhiều lớp (frame nổ + tia cắt + sóng kép +
+			# khói đen) và rung màn hình — đòn kết phải "nặng" hơn mọi skill.
+			VFXLibrary.fire_blast(caster.world.fx, caster.global_position, RADIUS * 0.7, 1)
+			VFXLibrary.ult_shake(self, 8.0)
 		var targets := enemies_in_radius(caster.global_position, RADIUS)
 		var total := 0
 		for e in targets:

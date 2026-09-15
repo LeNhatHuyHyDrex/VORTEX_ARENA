@@ -128,6 +128,10 @@ class TimeRift extends SkillBase:
 		})
 		# Vòng ấn chú thời gian bung ra khi kẽ hở mở — tấm kính không gian vỡ.
 		VFXLibrary.arcane_burst(caster.world.fx, at, Color("f0abfc"), 70.0)
+		# Mảnh kính thời gian xoè tại điểm mở kẽ — chữ ký hồng tím riêng.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.spell_seq(caster.world.fx, "fx7_energyBall", at, 1.0,
+				Color(0.95, 0.6, 0.85, 0.8), 26.0)
 
 
 # =========================================================== E — VÒNG LÙI
@@ -235,6 +239,11 @@ class StutterNova extends SkillBase:
 			"life": 0.55,
 			"accent": Color("fb7185"),
 		})
+		# Ngưng trôi: cầu năng lượng hồng nổ quanh người + vòng mặt đồng hồ thứ hai.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.arcane_blast(caster.world.fx, center, RADIUS, Color("fb7185"), 0)
+			VFXLibrary.shock_ring(caster.world.fx, center, RADIUS * 1.1,
+				Color(0.95, 0.75, 0.85, 0.35), 0.5)
 		for e in enemies_in_radius(center, RADIUS):
 			var slow: int = e.get_stacks(GameData.ST_SLOW)
 			e.take_damage(BASE_DAMAGE + PER_SLOW_STACK * slow, caster.peer_id)

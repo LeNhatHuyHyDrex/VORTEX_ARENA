@@ -90,6 +90,7 @@ class LeapSlam extends SkillBase:
 		id = &"leap_slam"
 		cast_type = SkillBase.CastType.DIRECTION
 		cast_range = 300.0
+		preview_shape = SkillBase.PreviewShape.DASH
 		aoe_radius = 88.0
 		display_name = "Bước Nhảy Chém"
 		description = "Nhảy vọt tới nơi chỉ định rồi đập rìu xuống đất:\n12 sát thương vùng + Chậm 1.2 giây. Cầu nối cận chiến."
@@ -112,6 +113,11 @@ class LeapSlam extends SkillBase:
 			e.add_status(GameData.ST_SLOW, 1, SLOW_TIME, caster.peer_id)
 			landed = true
 		Audio.play_at(&"hit_big", end, -2.0 if landed else -8.0, 0.8)
+		# Bụi đá tung lên tại điểm tiếp đất + vòng sóng cam — chất Cuồng Chiến.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.dust_impact(caster.world.fx, end, 1.4)
+			VFXLibrary.shock_ring(caster.world.fx, end, LANDING_RADIUS * 0.8,
+				Color(1.0, 0.5, 0.2, 0.55), 0.35)
 		caster.spawn_effect({
 			"kind": &"explosion",
 			"position": end,
@@ -153,6 +159,11 @@ class WarCry extends SkillBase:
 		caster.add_shield(SHIELD)
 		caster.add_status(GameData.ST_HASTE, 1, HASTE_TIME, caster.peer_id)
 		Audio.play_at(&"clash", caster.global_position, 0.0, 0.7)
+		# Chiến hào: lóe đỏ cam + vòng hào khí bung quanh người.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx, caster.global_position, Color("ea580c"))
+			VFXLibrary.shock_ring(caster.world.fx, caster.global_position, FEAR_RADIUS * 0.7,
+				Color(0.92, 0.4, 0.15, 0.5), 0.45)
 		for e in enemies_in_radius(caster.global_position, FEAR_RADIUS):
 			e.add_status(GameData.ST_SLOW, 1, SLOW_TIME, caster.peer_id)
 		caster.spawn_effect({
@@ -184,6 +195,12 @@ class SpinAxe extends SkillBase:
 
 	func execute(_aim: Vector2) -> void:
 		Audio.play_at(&"slash", caster.global_position, -3.0, 0.9)
+		# Xoáy rìu: hai vòng cắt cam nở quanh người, vòng trong đậm hơn.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, caster.global_position, RADIUS * 0.85,
+				Color(1.0, 0.55, 0.2, 0.55), 0.3)
+			VFXLibrary.shock_ring(caster.world.fx, caster.global_position, RADIUS * 0.55,
+				Color(1.0, 0.8, 0.4, 0.4), 0.22)
 		for e in enemies_in_radius(caster.global_position, RADIUS):
 			e.take_damage(DAMAGE, caster.peer_id)
 			e.apply_knockback(e.global_position - caster.global_position, KNOCKBACK)
@@ -218,6 +235,13 @@ class Execution extends SkillBase:
 	func execute(aim: Vector2) -> void:
 		var dir := aim.normalized()
 		Audio.play_at(&"execute", caster.global_position, 0.0, 1.0)
+		# Phán quyết (ULT): vệt chém lửa + bùng lửa tier-ultimate + rung màn hình.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.fire_slash(caster.world.fx,
+				caster.global_position + dir * REACH * 0.5, rad_to_deg(dir.angle()), 1.35)
+			VFXLibrary.fire_blast(caster.world.fx,
+				caster.global_position + dir * REACH * 0.5, 90.0, 1)
+		VFXLibrary.ult_shake(self, 7.5)
 		for e in enemies_in_cone(caster.global_position, dir, REACH, HALF_ANGLE):
 			var missing := 1.0 - clampf(e.hp / maxf(e.max_hp, 1.0), 0.0, 1.0)
 			e.take_damage(BASE_DAMAGE + MAX_BONUS * missing, caster.peer_id)

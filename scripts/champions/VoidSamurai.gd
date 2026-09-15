@@ -109,6 +109,11 @@ class SwiftSlash extends SkillBase:
 			"life": 0.16,
 			"accent": Color("6366f1"),
 		})
+		# Nghịch phong trảm: vệt khói tím phụ theo hướng — hai lớp chém chồng nhau.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.spell_seq(caster.world.fx, "fx10_blackExplosion",
+				caster.global_position + dir * REACH * 0.45, 0.85,
+				Color(0.7, 0.65, 1.0, 0.75), 32.0, rad_to_deg(dir.angle()), true)
 
 
 # ========================================================= W — NHẤT ĐAO LƯU
@@ -145,6 +150,10 @@ class IaiDraw extends SkillBase:
 			"life": 0.22,
 			"accent": Color("c7d2fe"),
 		})
+		# Nhất đao lưu: lóe trắng tím sắc lạnh tại điểm rút kiếm.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx,
+				caster.global_position + dir * REACH * 0.4, Color("c7d2fe"))
 
 
 # ========================================================= E — HƯ KHÔNG BƯỚC
@@ -159,6 +168,7 @@ class VoidStep extends SkillBase:
 		id = &"void_step"
 		cast_type = SkillBase.CastType.DIRECTION
 		cast_range = 290.0
+		preview_shape = SkillBase.PreviewShape.DASH
 		aoe_radius = 0.0
 		display_name = "Hư Không Bước"
 		description = "Lao xuyên thân địch qua hư không: 10 sát thương\n+ 2 Khóa Hồn mỗi kẻ bị xuyên qua."
@@ -173,6 +183,12 @@ class VoidStep extends SkillBase:
 		var end: Vector2 = start + dir * DASH_SPEED * DASH_TIME
 		caster.begin_dash(dir, DASH_SPEED, DASH_TIME)
 		Audio.play_at(&"teleport", start, -4.0, 1.1)
+		# Hư không bước: vòng tím tại hai đầu đường lướt — điểm đến sáng hơn.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, start, 40.0,
+				Color(0.55, 0.5, 1.0, 0.5), 0.28)
+			VFXLibrary.shock_ring(caster.world.fx, end, 52.0,
+				Color(0.65, 0.55, 1.0, 0.55), 0.32)
 		for e in enemies():
 			var ab := end - start
 			var len2 := ab.length_squared()
@@ -225,6 +241,12 @@ class BladeStorm extends SkillBase:
 			"life": LIFE,
 			"accent": Color("818cf8"),
 		})
+		# Vạn kiếm mộ (ULT): bùng bóng tím tier-ultimate + sóng kiếm kép.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shadow_burst(caster.world.fx, center, RADIUS, 1)
+			VFXLibrary.shock_ring(caster.world.fx, center, RADIUS * 1.1,
+				Color(0.55, 0.55, 1.0, 0.4), 0.5)
+		VFXLibrary.ult_shake(self, 7.0)
 
 
 # ============================================================ NỘI TẠI — SÁT Ý

@@ -71,7 +71,10 @@ func _draw() -> void:
 	var dst_size := Vector2(frame_w, frame_h) * pixel_scale
 	var dst := Rect2(-dst_size * 0.5, dst_size)
 	# Lật ngang bằng scale âm quanh tâm — dùng cho hiệu ứng theo hướng dash.
-	var xform := Transform2D().scaled(Vector2(-pixel_scale if flip_h else pixel_scale, pixel_scale))
-	draw_set_transform_matrix(Transform2D(0.0, Vector2.ZERO, xform.get_scale(), Vector2.ZERO))
+	# Dựng Transform2D bằng cặp trục cột (x_axis, y_axis, origin) — rõ ràng và
+	# không phụ thuộc constructor nào không có sẵn.
+	draw_set_transform_matrix(Transform2D(
+		Vector2(-pixel_scale if flip_h else pixel_scale, 0.0),
+		Vector2(0.0, pixel_scale), Vector2.ZERO))
 	draw_texture_rect_region(sheet, dst, src, tint)
 	draw_set_transform_matrix(Transform2D())

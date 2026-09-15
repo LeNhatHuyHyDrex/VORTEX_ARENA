@@ -72,6 +72,10 @@ class HammerSwing extends SkillBase:
 			"accent": Color("fcd34d"),
 		})
 		Audio.play_at(&"chain", caster.global_position, -12.0, 1.5)
+		# Tia điện cơ khí: lóe vàng điện tại đầu búa — chất thợ máy.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx,
+				caster.global_position + aim.normalized() * 26.0, Color("fcd34d"))
 
 
 # ============================================================= Q — MÌN NỔ
@@ -96,6 +100,10 @@ class LayMine extends SkillBase:
 	func execute(_aim: Vector2) -> void:
 		var center := ground_point(cast_range)
 		Audio.play_at(&"ui_click", center, -8.0, 0.8)
+		# Mìn nổ: vòng cảnh báo cam mảnh tại chỗ rải — biết mìn nằm đâu.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, center, 40.0,
+				Color(0.98, 0.6, 0.25, 0.5), 0.35)
 		caster.spawn_projectile({
 			"kind": &"mine",
 			"position": center,
@@ -129,6 +137,10 @@ class ArcWelder extends SkillBase:
 	func execute(aim: Vector2) -> void:
 		var dir := aim.normalized()
 		Audio.play_at(&"spark_shot", caster.global_position, -6.0, 1.2)
+		# Súng điện: lóe điện cam nhạt tại đầu súng trước khi ba tia xoè ra.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx,
+				caster.global_position + dir * 24.0, Color("fed7aa"))
 		# Ba tia xoè nhẹ, nên ở tầm gần cả ba cùng trúng — đó là phần thưởng cho
 		# việc áp sát, đổi lại phải chịu rủi ro ở gần.
 		var spreads: Array[float] = [-0.16, 0.0, 0.16]
@@ -157,6 +169,9 @@ class LaserFence extends SkillBase:
 		id = &"laser_fence"
 		cast_type = SkillBase.CastType.GROUND
 		cast_range = 400.0
+		# Hàng rào 5 khối trải ngang, vuông góc hướng ngắm.
+		preview_shape = SkillBase.PreviewShape.RECT
+		preview_rect_size = Vector2(246.0, 22.0)
 		aoe_radius = RADIUS
 		display_name = "Bẫy Laser"
 		description = "Dựng một hàng rào laser vuông góc với hướng ngắm.\nĐối thủ đi qua chịu sát thương liên tục và bị làm chậm."
@@ -173,6 +188,10 @@ class LaserFence extends SkillBase:
 		var perp := Vector2(-facing.y, facing.x).normalized()
 
 		Audio.play_at(&"ui_select", center, -2.0, 0.9)
+		# Bẫy laser: vòng sóng cyan quét qua dãy trụ vừa dựng.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, center, 70.0,
+				Color(0.4, 0.9, 1.0, 0.5), 0.4)
 		for i in range(SEGMENTS):
 			var offset := (float(i) - float(SEGMENTS - 1) * 0.5) * GAP
 			caster.spawn_projectile({
@@ -214,6 +233,12 @@ class AutoCannon extends SkillBase:
 	func execute(_aim: Vector2) -> void:
 		var center := ground_point(cast_range)
 		Audio.play_at(&"stone_wall", center, -2.0, 1.2)
+		# Pháo cố định (ULT): bụi lắp ráp + vòng cam khi hạ pháo xuống.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.dust_impact(caster.world.fx, center, 1.2)
+			VFXLibrary.shock_ring(caster.world.fx, center, 78.0,
+				Color(0.98, 0.65, 0.3, 0.5), 0.45)
+		VFXLibrary.ult_shake(self, 5.5)
 		caster.spawn_projectile({
 			"kind": &"autocannon",
 			"position": center,

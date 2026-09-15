@@ -78,6 +78,10 @@ class WhipCrack extends SkillBase:
 			"accent": Color("86efac"),
 		})
 		Audio.play_at(&"slash", caster.global_position, -10.0, 1.2)
+		# Vút roi: lóe xanh lục nhẹ tại tay vung — nhịp đánh của Chủ Ưng.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx,
+				caster.global_position + aim.normalized() * 24.0, Color("86efac"))
 
 
 # ========================================================= Q — TRIỆU HỒ
@@ -102,6 +106,11 @@ class SummonBeast extends SkillBase:
 	func execute(_aim: Vector2) -> void:
 		var spawn_at := ground_point(cast_range)
 		Audio.play_at(&"ui_select", spawn_at, -4.0, 0.85)
+		# Triệu hồ: vòng xanh ma thuật nơi sói hiện hình.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx, spawn_at, Color("4ade80"))
+			VFXLibrary.shock_ring(caster.world.fx, spawn_at, 54.0,
+				Color(0.4, 0.85, 0.5, 0.5), 0.35)
 		caster.spawn_projectile({
 			"kind": &"spirit_wolf",
 			"position": spawn_at,
@@ -141,6 +150,10 @@ class Command extends SkillBase:
 			dir = (target.global_position - caster.global_position).normalized()
 
 		Audio.play_at(&"ui_select", caster.global_position, -3.0, 1.15)
+		# Khống chế: vòng lệnh xanh phát ra từ chỗ ra lệnh.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, caster.global_position, 58.0,
+				Color(0.5, 0.9, 0.55, 0.5), 0.3)
 		# Gọi thêm một con lao thẳng tới mục tiêu — đây là cách "ra lệnh" trong
 		# bản 1v1, vì không có đàn thú thường trú để mà điều khiển.
 		caster.spawn_projectile({
@@ -187,6 +200,10 @@ class Pack extends SkillBase:
 			"life": 0.5,
 			"accent": Color("4ade80"),
 		})
+		# Đàn bầy: vòng triệu hồi xanh nở rộng — cả bầy đang bước ra.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, caster.global_position, 120.0,
+				Color(0.45, 0.85, 0.55, 0.45), 0.45)
 		for i in range(COUNT):
 			var a := TAU * float(i) / float(COUNT) + randf()
 			var spawn_at: Vector2 = caster.global_position + Vector2(cos(a), sin(a)) * 76.0
@@ -215,6 +232,7 @@ class Stampede extends SkillBase:
 		id = &"stampede"
 		cast_type = SkillBase.CastType.DIRECTION
 		cast_range = 340.0
+		preview_shape = SkillBase.PreviewShape.DASH
 		aoe_radius = 90.0
 		display_name = "Sói Đoàn"
 		description = "Bản thân và cả đàn cùng lao về một hướng.\nMọi kẻ trên đường bị húc văng và CHOÁNG."
@@ -229,6 +247,12 @@ class Stampede extends SkillBase:
 		var end: Vector2 = start + dir * DASH_REACH
 
 		Audio.play_at(&"dash_fire", start, 1.0, 0.8)
+		# Sói đoàn (ULT): bụi cuộn dọc đường xung phong + vòng tại điểm đến.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.dust_impact(caster.world.fx, start.lerp(end, 0.5), 1.5)
+			VFXLibrary.shock_ring(caster.world.fx, end, 90.0,
+				Color(0.5, 0.9, 0.55, 0.5), 0.45)
+		VFXLibrary.ult_shake(self, 6.5)
 		caster.begin_dash(dir, DASH_REACH / 0.22, 0.22)
 
 		# Đàn thú chạy hai bên sườn, không trùng đường với chủ.

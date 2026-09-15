@@ -65,6 +65,10 @@ class RockThrow extends SkillBase:
 			"accent": Color("a8a29e"),
 		})
 		Audio.play_at(&"stone_throw", caster.global_position, -8.0, 1.25)
+		# Bụi đá nhỏ tại tay ném — nhịp đánh thường của Thạch Vệ Binh.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.dust_impact(caster.world.fx,
+				caster.global_position + aim.normalized() * 22.0, 0.7)
 
 
 # ========================================================= Q — ĐÁ LĂN
@@ -97,6 +101,11 @@ class BoulderRoll extends SkillBase:
 			"accent": Color("a8a29e"),
 		})
 		Audio.play_at(&"stone_throw", caster.global_position, 2.0, 0.8)
+		# Đá lăn: bụi cuộn mạnh tại chỗ phát — viên đá to phải nặng nề.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.dust_impact(caster.world.fx, caster.global_position, 1.2)
+			VFXLibrary.shock_ring(caster.world.fx, caster.global_position, 64.0,
+				Color(0.7, 0.68, 0.62, 0.5), 0.35)
 
 
 # ========================================================= W — TƯỜNG ĐÁ
@@ -109,6 +118,9 @@ class StoneWall extends SkillBase:
 		id = &"stone_wall"
 		cast_type = SkillBase.CastType.GROUND
 		cast_range = 340.0
+		# Tường dựng vuông góc hướng ngắm: dài ~3 khối, dày 1 khối.
+		preview_shape = SkillBase.PreviewShape.RECT
+		preview_rect_size = Vector2(172.0, 30.0)
 		aoe_radius = 56.0
 		display_name = "Tường Đá"
 		description = "Dựng một bức tường đá chắn trước mặt.\nChặn cả đường đi lẫn đường bay của đạn, tồn tại 6 giây."
@@ -130,6 +142,9 @@ class StoneWall extends SkillBase:
 		if facing.length_squared() < 1.0:
 			facing = aim
 		var perp := Vector2(-facing.y, facing.x).normalized()
+		# Dựng vách: bụi đá tung lên dọc cao độ nơi vách sắp mọc.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.dust_impact(caster.world.fx, center, 1.3)
 
 		var placed := 0
 		for i in range(SEGMENTS):
@@ -184,6 +199,11 @@ class StoneShield extends SkillBase:
 			"life": 0.4,
 			"accent": Color("22d3ee"),
 		})
+		# Khiên đá: vảy đá kết quanh người — bụi vàng đất + vòng ngăn.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx, caster.global_position, Color("d6d3d1"))
+			VFXLibrary.shock_ring(caster.world.fx, caster.global_position, RADIUS * 0.8,
+				Color(0.75, 0.72, 0.65, 0.5), 0.4)
 		for e in enemies_in_radius(caster.global_position, RADIUS):
 			e.add_status(GameData.ST_BREAK, 1, BREAK_TIME, caster.peer_id)
 
@@ -219,6 +239,12 @@ class Earthquake extends SkillBase:
 		# Sóng địa chấn bung bụi đá — vòng nâu xám nở tròn từ điểm đập.
 		VFXLibrary.arcane_burst(caster.world.fx, caster.global_position,
 			Color("a8a29e"), RADIUS * 0.85)
+		# Địa chấn (ULT): bụi tung to hơn + sóng kép + rung màn hình mạnh.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.dust_impact(caster.world.fx, caster.global_position, 2.0)
+			VFXLibrary.shock_ring(caster.world.fx, caster.global_position, RADIUS * 1.1,
+				Color(0.65, 0.6, 0.5, 0.45), 0.55)
+		VFXLibrary.ult_shake(self, 8.0)
 		for e in enemies_in_radius(caster.global_position, RADIUS):
 			var broken: bool = e.has_status(GameData.ST_BREAK)
 			var dmg := DAMAGE + (BREAK_BONUS if broken else 0.0)

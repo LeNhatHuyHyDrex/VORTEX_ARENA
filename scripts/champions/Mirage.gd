@@ -109,6 +109,10 @@ class BlinkStep extends SkillBase:
 
 		caster.set_meta(META_SHADOW, origin)
 		caster.set_meta(META_HAS, true)
+		# Tốc biến: vòng ảnh cyan nở tại chỗ đứng — bóng ở lại nơi cũ.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, origin, 44.0,
+				Color(0.4, 0.85, 0.95, 0.5), 0.3)
 		caster.spawn_effect({
 			"kind": &"shadow_marker",
 			"position": origin,
@@ -266,6 +270,12 @@ class BackStrike extends SkillBase:
 			"life": 0.4,
 			"accent": Color("a5f3fc"),
 		})
+		# Đâm từ bóng (ULT): lóe hồng đặc trưng + sóng kép + rung màn hình.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx, dest, Color("f0abfc"))
+			VFXLibrary.shock_ring(caster.world.fx, dest, 104.0,
+				Color(0.55, 0.9, 1.0, 0.45), 0.45)
+		VFXLibrary.ult_shake(self, 6.0)
 
 
 # ======================================================== NỘI TẠI — BÓNG THEO

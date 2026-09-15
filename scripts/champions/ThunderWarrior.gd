@@ -118,6 +118,7 @@ class LightningDash extends SkillBase:
 		id = &"lightning_dash"
 		cast_type = SkillBase.CastType.DIRECTION
 		cast_range = 280.0
+		preview_shape = SkillBase.PreviewShape.DASH
 		aoe_radius = 0.0
 		display_name = "Lướt Sét"
 		description = "Lướt nhanh theo hướng ngắm.\nMọi kẻ bị xuyên qua đều dính TÍCH ĐIỆN."
@@ -246,6 +247,9 @@ class HeavensThunder extends SkillBase:
 		Audio.play_at(&"thunder", center, 3.0)
 		if caster.world != null and "fx" in caster.world:
 			VFXLibrary.lightning_strike(caster.world.fx, center)
+			# Lớp nổ cầu sét + sóng kép — ultimate phải lớn hơn chiêu thường.
+			VFXLibrary.lightning_burst(caster.world.fx, center, RADIUS, 1)
+		VFXLibrary.ult_shake(self, 7.0)
 		caster.spawn_effect({
 			"kind": &"explosion",
 			"position": center,

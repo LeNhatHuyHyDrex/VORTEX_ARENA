@@ -191,6 +191,10 @@ class IceSlide extends SkillBase:
 		var end: Vector2 = start + dir * DASH_REACH
 		caster.begin_dash(dir, DASH_SPEED, DASH_TIME)
 		Audio.play_at(&"ice_shard", start, -6.0, 0.7)
+		# Vệt băng lướt: vòng lạnh hẹp dọc đường trượt — đọc rõ điểm đến.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, start.lerp(end, 0.5), 60.0,
+				Color(0.65, 0.92, 1.0, 0.5), 0.4)
 
 		# Tường băng dựng lại ngay chỗ vừa rời đi, vuông góc với hướng lướt.
 		#

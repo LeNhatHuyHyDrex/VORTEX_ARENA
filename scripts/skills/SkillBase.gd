@@ -27,6 +27,24 @@ enum CastType {
 
 var cast_type: CastType = CastType.DIRECTION
 
+## Hình dạng vùng xem trước khi chiêu được "lên đạn" — CastIndicator đọc giá trị
+## này để chọn cách vẽ. Mặc định: GROUND vẽ vòng tròn tại điểm đặt, DIRECTION
+## vẽ hình quạt; chiêu lướt vẽ ĐIỂM HẠ CÁNH, chiêu tường vẽ hình chữ nhật.
+enum PreviewShape {
+	CIRCLE,  # mặc định — vòng tròn / hình quạt như cũ
+	RECT,    # tường chắn vuông góc hướng ngắm (Tường Đá, Bẫy Laser)
+	DASH,    # lướt — đánh dấu nơi tướng sẽ đáp xuống
+}
+
+var preview_shape: PreviewShape = PreviewShape.CIRCLE
+
+## Kích thước hình chữ nhật khi preview_shape == RECT:
+## x = chiều dài tường (vuông góc hướng ngắm), y = bề dày (dọc hướng ngắm).
+var preview_rect_size := Vector2(240.0, 26.0)
+
+## true = chiêu lướt NGƯỢC hướng ngắm (Bước Lùi Súng) — điểm hạ cánh vẽ sau lưng.
+var preview_dash_back := false
+
 ## Tầm xa tối đa của kỹ năng, tính bằng pixel. Dùng để vẽ vòng phạm vi và để
 ## kẹp điểm đặt chiêu — người chơi không thể đặt vùng ngoài tầm.
 var cast_range := 520.0

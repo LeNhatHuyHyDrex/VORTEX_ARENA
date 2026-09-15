@@ -66,6 +66,10 @@ class Snipe extends SkillBase:
 			"accent": Color("fde047"),
 		})
 		Audio.play_at(&"spark_shot", caster.global_position, -10.0, 1.3)
+		# Khói nhỏ đầu nòng — nhịp bắn tiêu chuẩn của Xạ Thủ.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx,
+				caster.global_position + aim.normalized() * 22.0, Color("fde047"))
 
 
 # ========================================================== Q — XUYÊN THẤU
@@ -99,6 +103,13 @@ class PiercingShot extends SkillBase:
 			"accent": Color("fcd34d"),
 		})
 		Audio.play_at(&"spark_shot", caster.global_position, -2.0, 0.85)
+		# Xuyên thấu: lóe đậm hơn + vòng sóng dọc đường đạn vừa rời nòng.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx,
+				caster.global_position + aim.normalized() * 26.0, Color("fcd34d"))
+			VFXLibrary.shock_ring(caster.world.fx,
+				caster.global_position + aim.normalized() * 40.0, 40.0,
+				Color(0.98, 0.85, 0.4, 0.45), 0.25)
 
 
 # ======================================================= E — BƯỚC LÙI SÚNG
@@ -111,6 +122,9 @@ class GunStep extends SkillBase:
 		id = &"gun_step"
 		cast_type = SkillBase.CastType.DIRECTION
 		cast_range = 260.0
+		# Lướt NGƯỢC hướng ngắm — mốc điểm hạ cánh phải vẽ sau lưng.
+		preview_shape = SkillBase.PreviewShape.DASH
+		preview_dash_back = true
 		aoe_radius = 70.0
 		display_name = "Bước Lùi Súng"
 		description = "Lướt NGƯỢC hướng ngắm để giữ khoảng cách.\nĐể lại một bãi mìn làm chậm kẻ đuổi theo."
@@ -133,6 +147,10 @@ class GunStep extends SkillBase:
 
 		caster.begin_dash(back, DASH_REACH / DASH_TIME, DASH_TIME)
 		Audio.play_at(&"dash_fire", origin, -4.0, 0.9)
+		# Bước lùi súng: vòng bụi tại chỗ đứng cũ — dấu vết thoát thân.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, origin, 42.0,
+				Color(0.95, 0.8, 0.45, 0.5), 0.3)
 
 		caster.spawn_projectile({
 			"kind": &"cal_trap",
@@ -177,6 +195,10 @@ class Scope extends SkillBase:
 			"life": DURATION,
 			"accent": Color("fbbf24"),
 		})
+		# Ống nhòm: vòng ngắm vàng mảnh chồng lên — tâm thế bắn tỉa.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, caster.global_position, 96.0,
+				Color(0.98, 0.8, 0.3, 0.4), 0.6)
 
 
 # ======================================================= F — PHÁT SÚNG CUỐI
@@ -214,6 +236,13 @@ class FinalShot extends SkillBase:
 			"life": 0.35,
 			"accent": Color("fef08a"),
 		})
+		# Phát súng cuối (ULT): giật súng mạnh — sóng kép vàng + rung màn hình.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, origin, 88.0,
+				Color(1.0, 0.9, 0.5, 0.55), 0.35)
+			VFXLibrary.shock_ring(caster.world.fx, origin, 120.0,
+				Color(1.0, 0.75, 0.35, 0.35), 0.5)
+		VFXLibrary.ult_shake(self, 6.0)
 		caster.spawn_projectile({
 			"kind": &"rail_round",
 			"direction": dir,

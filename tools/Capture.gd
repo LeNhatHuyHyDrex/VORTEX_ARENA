@@ -84,6 +84,11 @@ var _shots: Array = [
 	# --- Đợt khe cắm asset: thẻ tướng mặc định (Hỏa Pháp Sư) ---
 	{"scene": "res://scenes/MainMenu.tscn", "wait": 2.2, "name": "34_champ_default",
 		"after_load": "_open_champ_default"},
+	# --- Phase 11: xem trước chiêu lướt + chiêu tường ---
+	{"scene": "res://scenes/Game.tscn", "wait": 4.0, "name": "35_dash_preview",
+		"before_load": "_solo_berserker", "after_load": "_arm_dash"},
+	{"scene": "res://scenes/Game.tscn", "wait": 4.0, "name": "36_wall_preview",
+		"before_load": "_solo_stone_guardian", "after_load": "_arm_wall"},
 ]
 
 func _ready() -> void:
@@ -389,6 +394,32 @@ func _force_match_end(scene: Node) -> void:
 func _open_champ_default(scene: Node) -> void:
 	if scene.has_method("_show"):
 		scene._show(3)
+
+# ------------------------------------------------- phase 11: lướt + tường
+
+func _solo_stone_guardian() -> void:
+	Game.pending_mode = GameData.Mode.SOLO
+	Game.pending_champion = &"stone_guardian"
+
+## Lên đạn Bước Nhảy Chém (ô 0) — chụp dải lướt + điểm hạ cánh mới của Phase 11.
+func _arm_dash(scene: Node) -> void:
+	await get_tree().create_timer(3.2).timeout
+	if scene is Game:
+		var g := scene as Game
+		if g.local_champ != null:
+			g.armed_slot = 0
+			g.armed_point = g.local_champ.global_position + Vector2(260, -70)
+			g.armed_valid = true
+
+## Lên đạn Tường Đá (ô 1) — chụp hình chữ nhật tường vuông góc hướng ngắm.
+func _arm_wall(scene: Node) -> void:
+	await get_tree().create_timer(3.2).timeout
+	if scene is Game:
+		var g := scene as Game
+		if g.local_champ != null:
+			g.armed_slot = 1
+			g.armed_point = g.local_champ.global_position + Vector2(230, -60)
+			g.armed_valid = true
 
 # --------------------------------------------------------------- chụp
 

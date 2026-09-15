@@ -119,6 +119,7 @@ class Blink extends SkillBase:
 		id = &"blink"
 		cast_type = SkillBase.CastType.GROUND
 		cast_range = 520.0
+		preview_shape = SkillBase.PreviewShape.DASH
 		aoe_radius = LEAVE_RADIUS
 		display_name = "Dịch Chuyển"
 		description = "Dịch chuyển tới vùng đã chọn.\nĐể lại một vụ nổ tại chỗ vừa đứng, gây sát thương kẻ bám theo."
@@ -210,6 +211,12 @@ class BlackHole extends SkillBase:
 			"pull_radius": RADIUS,
 			"accent": Color("8b5cf6"),
 		})
+		# Hố đen: lõi tối tím sụp + vòng hút xoáy khi vừa mở.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.spell_seq(caster.world.fx, "fx10_blackExplosion", center,
+				RADIUS / 130.0, Color(0.5, 0.4, 0.9, 0.7), 16.0)
+			VFXLibrary.shock_ring(caster.world.fx, center, RADIUS * 0.9,
+				Color(0.55, 0.45, 0.95, 0.5), 0.5)
 
 
 # ========================================================== F — SỤP ĐỔ

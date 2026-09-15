@@ -96,6 +96,7 @@ class WindStep extends SkillBase:
 		id = &"wind_step"
 		cast_type = SkillBase.CastType.DIRECTION
 		cast_range = 280.0
+		preview_shape = SkillBase.PreviewShape.DASH
 		aoe_radius = 0.0
 		display_name = "Phong Bộ"
 		description = "Trượt gió lao tới: xuyên qua địch, mỗi kẻ bị xuyên\nchậm 1 giây. Dùng để áp sát hoặc rút lui."
@@ -110,6 +111,10 @@ class WindStep extends SkillBase:
 		var end: Vector2 = start + dir * DASH_SPEED * DASH_TIME
 		caster.begin_dash(dir, DASH_SPEED, DASH_TIME)
 		Audio.play_at(&"blink", start, -5.0, 1.0)
+		# Phong bộ: vòng gió vàng nhạt nở tại điểm đến.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx, end, 46.0,
+				Color(0.98, 0.9, 0.55, 0.5), 0.3)
 		for e in enemies():
 			var ab := end - start
 			var len2 := ab.length_squared()
@@ -149,6 +154,11 @@ class GoldenBell extends SkillBase:
 		caster.add_shield(SHIELD)
 		caster.add_status(GameData.ST_HASTE, 1, HASTE_TIME, caster.peer_id)
 		Audio.play_at(&"shield", caster.global_position, -3.0, 0.9)
+		# Chung vàng: lóe kim quang + vòng chuông ngân quanh người.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx, caster.global_position, Color("f59e0b"))
+			VFXLibrary.shock_ring(caster.world.fx, caster.global_position, 72.0,
+				Color(0.95, 0.75, 0.3, 0.5), 0.4)
 		caster.spawn_effect({
 			"kind": &"explosion",
 			"position": caster.global_position,
@@ -182,6 +192,11 @@ class HeavenPalm extends SkillBase:
 	func execute(aim: Vector2) -> void:
 		var dir := aim.normalized()
 		Audio.play_at(&"hit_big", caster.global_position, -2.0, 0.8)
+		# Thiên chưởng ấn: vòng sóng kim loại dội về phía trước.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shock_ring(caster.world.fx,
+				caster.global_position + dir * REACH * 0.5, 88.0,
+				Color(0.95, 0.8, 0.4, 0.55), 0.32)
 		for e in enemies_in_cone(caster.global_position, dir, REACH, HALF_ANGLE):
 			e.take_damage(DAMAGE, caster.peer_id)
 			e.add_status(GameData.ST_BREAK, BREAK_STACKS, BREAK_TIME, caster.peer_id)
@@ -218,6 +233,13 @@ class IronVerdict extends SkillBase:
 	func execute(aim: Vector2) -> void:
 		var dir := aim.normalized()
 		Audio.play_at(&"execute", caster.global_position, 0.0, 1.0)
+		# Nhất quyền trấn hồn (ULT): bụi đá tung + cầu kim quang nổ tier-ult.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.dust_impact(caster.world.fx,
+				caster.global_position + dir * REACH * 0.55, 1.5)
+			VFXLibrary.arcane_blast(caster.world.fx,
+				caster.global_position + dir * REACH * 0.55, 105.0, Color("f59e0b"), 1)
+		VFXLibrary.ult_shake(self, 7.0)
 		for e in enemies_in_cone(caster.global_position, dir, REACH, HALF_ANGLE):
 			var dmg := DAMAGE + (BONUS_VS_BREAK if e.has_status(GameData.ST_BREAK) else 0.0)
 			if e.take_damage(dmg, caster.peer_id):

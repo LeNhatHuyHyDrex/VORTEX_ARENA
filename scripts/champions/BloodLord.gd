@@ -110,6 +110,10 @@ class BloodBolt extends SkillBase:
 			"accent": Color("ef4444"),
 		})
 		Audio.play_at(&"void_bolt", caster.global_position, -9.0, 0.7)
+		# Lóe huyết sắc tại tay phóng — viên đạn máu cần khởi đầu đỏ thẫm.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx,
+				caster.global_position + aim.normalized() * 24.0, Color("ef4444"))
 
 
 # ========================================================= W — ĐÀN DƠI
@@ -140,6 +144,13 @@ class BatSwarm extends SkillBase:
 		var end: Vector2 = start + dir * DASH_REACH
 		caster.begin_dash(dir, DASH_SPEED, DASH_TIME)
 		Audio.play_at(&"blink", start, -4.0, 1.2)
+		# Đàn dơi: vệt khói đỏ dọc đường lướt + vòng huyết tại điểm đến.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.spell_seq(caster.world.fx, "fx10_blackExplosion",
+				start.lerp(end, 0.5), 1.0, Color(0.7, 0.2, 0.25, 0.6), 20.0,
+				rad_to_deg(dir.angle()), true)
+			VFXLibrary.shock_ring(caster.world.fx, end, 52.0,
+				Color(0.85, 0.3, 0.3, 0.5), 0.3)
 		var healed := 0
 		for e in enemies():
 			var ab := end - start
@@ -192,6 +203,11 @@ class Longevity extends SkillBase:
 		caster.add_shield(SHIELD)
 		caster.heal(HEAL)
 		Audio.play_at(&"shield", caster.global_position, -4.0, 0.7)
+		# Trường sinh: huyết quang dịu nở quanh người khi hồi máu.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.cast_flash(caster.world.fx, caster.global_position, Color("f87171"))
+			VFXLibrary.shock_ring(caster.world.fx, caster.global_position, 78.0,
+				Color(0.95, 0.45, 0.45, 0.45), 0.4)
 		caster.spawn_effect({
 			"kind": &"explosion",
 			"position": caster.global_position,
@@ -238,6 +254,13 @@ class BloodPool extends SkillBase:
 			"life": 3.6,
 			"accent": Color("dc2626"),
 		})
+		# Dòng Máu (ULT): quả cầu huyết nổ tier-ultimate + nền đất đỏ thẫm.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.arcane_blast(caster.world.fx, center, RADIUS,
+				Color(0.85, 0.2, 0.25), 1)
+			VFXLibrary.spell_seq(caster.world.fx, "fx9_rainOnGround", center,
+				RADIUS / 110.0, Color(0.8, 0.25, 0.3, 0.55), 16.0, 0.0, false, false, false)
+		VFXLibrary.ult_shake(self, 6.5)
 
 
 # ============================================================ NỘI TẠI — HẤP HUYẾT

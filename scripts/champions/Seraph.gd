@@ -228,6 +228,13 @@ class DivineSmite extends SkillBase:
 			if caster_ref == null or not is_instance_valid(caster_ref):
 				return
 			Audio.play_at(&"thunder", center, 2.0, 0.7)
+			# Thiên khai (ULT): cột sáng vàng tier-ultimate nổ sau vòng cảnh báo.
+			if caster_ref.world != null and "fx" in caster_ref.world:
+				VFXLibrary.arcane_blast(caster_ref.world.fx, center, RADIUS,
+					Color("fde68a"), 1)
+				VFXLibrary.shock_ring(caster_ref.world.fx, center, RADIUS * 1.2,
+					Color(1.0, 0.98, 0.85, 0.4), 0.55)
+			VFXLibrary.ult_shake(caster_ref, 7.0)
 			caster_ref.spawn_effect({
 				"kind": &"explosion",
 				"position": center,

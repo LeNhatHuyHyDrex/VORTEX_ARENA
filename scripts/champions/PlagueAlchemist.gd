@@ -219,6 +219,11 @@ class PlagueDetonation extends SkillBase:
 	func execute(aim: Vector2) -> void:
 		var center: Vector2 = ground_point(CAST_RANGE, aim)
 		Audio.play_at(&"detonate", center, 0.0, 1.0)
+		# Bùng khói độc tier-ultimate + mưa độc loang + rung màn hình.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.poison_burst(caster.world.fx, center, RADIUS, 1)
+			VFXLibrary.poison_puddle(caster.world.fx, center, RADIUS * 0.8)
+		VFXLibrary.ult_shake(self, 6.5)
 		for e in enemies_in_radius(center, RADIUS):
 			var stacks: int = e.consume_status(GameData.ST_POISON)
 			e.take_damage(BASE_DAMAGE + PER_STACK * stacks, caster.peer_id)

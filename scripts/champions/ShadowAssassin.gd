@@ -108,6 +108,12 @@ class TwinSlash extends SkillBase:
 			caster.consume_status(GameData.ST_EMPOWER)
 		Audio.play_at(&"slash_crit" if crit else &"slash", caster.global_position)
 
+		# Vệt chém bóng theo hướng quạt — lóe tím ngắn đúng góc vung dao.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.spell_seq(caster.world.fx, "fx10_blackExplosion",
+				caster.global_position + dir * REACH * 0.45, 0.9,
+				Color(0.85, 0.7, 1.0, 0.85), 32.0, rad_to_deg(dir.angle()), true)
+
 		var hits := enemies_in_cone(caster.global_position, dir, REACH, HALF_ANGLE)
 		for e in hits:
 			var dmg := BASE_DAMAGE
@@ -315,6 +321,14 @@ class DeathBlossom extends SkillBase:
 		target.apply_knockback(target.global_position - caster.global_position, 200.0)
 		if is_execute and target.is_alive():
 			target.add_status(GameData.ST_SLOW, 1, 3.0, caster.peer_id)
+
+		# Lớp pack ULT: khói đen tím bùng quanh mục tiêu + sóng kép. Bị xử lý
+		# (execute) thì khói thêm một lớp sáng hơn, rộng hơn — nhìn là biết đòn
+		# "chốt" đã ăn.
+		if caster.world != null and "fx" in caster.world:
+			VFXLibrary.shadow_burst(caster.world.fx, target.global_position,
+				70.0 + 18.0 * float(marks), 1 if is_execute else 0)
+			VFXLibrary.ult_shake(self, 6.0)
 
 		caster.spawn_effect({
 			"kind": &"explosion",
