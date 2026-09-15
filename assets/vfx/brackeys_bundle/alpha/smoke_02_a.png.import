@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://putdww0etdea"
-path="res://.godot/imported/smoke_02_a.png-85525d0ffe32087e6b932b3531b44009.ctex"
+path="res://.godot/imported/smoke_02_a.png-a4469a20d6ab7980e82e19ccc0d47f8a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://brackeys_particle_bundle/particles/alpha/smoke_02_a.png"
-dest_files=["res://.godot/imported/smoke_02_a.png-85525d0ffe32087e6b932b3531b44009.ctex"]
+source_file="res://assets/vfx/brackeys_bundle/alpha/smoke_02_a.png"
+dest_files=["res://.godot/imported/smoke_02_a.png-a4469a20d6ab7980e82e19ccc0d47f8a.ctex"]
 
 [params]
 

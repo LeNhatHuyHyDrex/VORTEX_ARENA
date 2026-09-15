@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://btjruq1j6a056"
-path="res://.godot/imported/star_04_a.png-183fd194af6ce18b8b885998d2b07e21.ctex"
+path="res://.godot/imported/star_04_a.png-2bf10825e9a6e83e4b081a182ae8493d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://brackeys_particle_bundle/particles/alpha/star_04_a.png"
-dest_files=["res://.godot/imported/star_04_a.png-183fd194af6ce18b8b885998d2b07e21.ctex"]
+source_file="res://assets/vfx/brackeys_bundle/alpha/star_04_a.png"
+dest_files=["res://.godot/imported/star_04_a.png-2bf10825e9a6e83e4b081a182ae8493d.ctex"]
 
 [params]
 

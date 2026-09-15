@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgqaxabtr6jwl"
-path.s3tc="res://.godot/imported/magic_03_a.png-e7430f01cae271d526e5a9b7fc86b034.s3tc.ctex"
+path.s3tc="res://.godot/imported/magic_03_a.png-8549e6775ed29a361b65f742d5b411b9.s3tc.ctex"
+path.etc2="res://.godot/imported/magic_03_a.png-8549e6775ed29a361b65f742d5b411b9.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://brackeys_particle_bundle/particles/alpha/magic_03_a.png"
-dest_files=["res://.godot/imported/magic_03_a.png-e7430f01cae271d526e5a9b7fc86b034.s3tc.ctex"]
+source_file="res://assets/vfx/brackeys_bundle/alpha/magic_03_a.png"
+dest_files=["res://.godot/imported/magic_03_a.png-8549e6775ed29a361b65f742d5b411b9.s3tc.ctex", "res://.godot/imported/magic_03_a.png-8549e6775ed29a361b65f742d5b411b9.etc2.ctex"]
 
 [params]
 

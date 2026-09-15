@@ -13,6 +13,17 @@ const _K_FLAME := _K_PATH + "flame_05.png"
 const _K_CIRCLE := _K_PATH + "circle_03.png"
 const _K_MUZZLE := _K_PATH + "muzzle_05_rotated.png"
 const _K_TRACE := _K_PATH + "trace_05_rotated.png"
+# Brackeys VFX Bundle (CC0) — nguồn texture bổ sung, dùng khi có import.
+# Giữ cache riêng để mỗi hero có thể trộn các lớp khác nhau: slash/magic cho
+# kiếm/pháp, flame/scorch cho lửa, smoke/dirt cho đất, spark/light cho điện.
+const _B_PATH := "res://assets/vfx/brackeys_bundle/alpha/"
+const _B_LIGHT := _B_PATH + "light_01_a.png"
+const _B_SPARK := _B_PATH + "spark_05_a.png"
+const _B_FLAME := _B_PATH + "flame_05_a.png"
+const _B_MAGIC := _B_PATH + "magic_03_a.png"
+const _B_SLASH := _B_PATH + "slash_02_a.png"
+const _B_SMOKE := _B_PATH + "smoke_07_a.png"
+const _B_SCORCH := _B_PATH + "scorch_02_a.png"
 static var _kenney_loaded := false
 static var k_spark: Texture2D
 static var k_light: Texture2D
@@ -20,11 +31,33 @@ static var k_flame: Texture2D
 static var k_circle: Texture2D
 static var k_muzzle: Texture2D
 static var k_trace: Texture2D
+static var b_light: Texture2D
+static var b_spark: Texture2D
+static var b_flame: Texture2D
+static var b_magic: Texture2D
+static var b_slash: Texture2D
+static var b_smoke: Texture2D
+static var b_scorch: Texture2D
+
+static func _load_texture(path: String) -> Texture2D:
+	if not ResourceLoader.exists(path):
+		return null
+	return load(path) as Texture2D
+
+static func _load_brackeys() -> void:
+	b_light = _load_texture(_B_LIGHT)
+	b_spark = _load_texture(_B_SPARK)
+	b_flame = _load_texture(_B_FLAME)
+	b_magic = _load_texture(_B_MAGIC)
+	b_slash = _load_texture(_B_SLASH)
+	b_smoke = _load_texture(_B_SMOKE)
+	b_scorch = _load_texture(_B_SCORCH)
 
 static func _load_kenney() -> void:
 	if _kenney_loaded:
 		return
 	_kenney_loaded = true
+	_load_brackeys()
 	if ResourceLoader.exists(_K_SPARK):
 		k_spark = load(_K_SPARK)
 	if ResourceLoader.exists(_K_LIGHT):
@@ -405,8 +438,9 @@ static func hit_impact(parent: Node, pos: Vector2, color: Color,
 	if parent == null:
 		return null
 	_load_kenney()
-	# Ưu tiên sprite Kenney Particle Pack nếu có — trông "thật" hơn vẽ vector.
-	if k_light != null and k_spark != null and randf() < 0.65:
+	# Ưu tiên sprite Kenney; nếu thiếu thì dùng Brackeys CC0 bundle.
+	# Cả hai nguồn đều đi qua cùng một node composite, nên hero vẫn giữ màu/theme.
+	if (k_light != null or b_light != null) and (k_spark != null or b_spark != null) and randf() < 0.82:
 		var node := SpriteHitImpactNode.new()
 		node.position = pos
 		node.color = color
@@ -537,8 +571,8 @@ class SpriteHitImpactNode extends Node2D:
 	func _draw() -> void:
 		var t := 1.0 - life / max_life
 		var fade := 1.0 - t
-		var light_tex := VFXLibrary.k_light
-		var spark_tex := VFXLibrary.k_spark
+		var light_tex: Texture2D = VFXLibrary.k_light if VFXLibrary.k_light != null else VFXLibrary.b_light
+		var spark_tex: Texture2D = VFXLibrary.k_spark if VFXLibrary.k_spark != null else VFXLibrary.b_spark
 		# 1. Chớp sáng trung tâm (light sprite thu nhỏ).
 		if light_tex != null:
 			var burst := 22.0 * (1.0 - t * 0.55) * strength
@@ -641,10 +675,9 @@ class FireEruptionNode extends Node2D:
 			pts.append(Vector2(cos(a) * radius * 0.8, sin(a) * radius * 0.4))
 		draw_colored_polygon(pts, Color(1.0, 0.45, 0.1, 0.28 * fade))
 
-		# Lớp sprite flame Kenney (nếu đã import) — chớp sáng lửa lớn ngay tâm,
-		# giúp hiệu ứng có "chất" hơn là chỉ vector đơn thuần.
-		if VFXLibrary.k_flame != null:
-			var fl := VFXLibrary.k_flame
+		# Lớp sprite flame Kenney hoặc Brackeys — chớp sáng lửa lớn ngay tâm.
+		var fl: Texture2D = VFXLibrary.k_flame if VFXLibrary.k_flame != null else VFXLibrary.b_flame
+		if fl != null:
 			var flame_size := radius * 2.0 * grow
 			draw_texture_rect(fl,
 				Rect2(Vector2(-flame_size * 0.5, -flame_size * 0.5),

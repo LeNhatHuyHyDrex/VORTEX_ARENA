@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cqt0c622hq0yt"
-path="res://.godot/imported/spark_03_a.png-0c6b84995c4dddbbc514dc03222be99e.ctex"
+path="res://.godot/imported/spark_03_a.png-02c62fc68750d11dc0fdf2af4e87f684.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://brackeys_particle_bundle/particles/alpha/spark_03_a.png"
-dest_files=["res://.godot/imported/spark_03_a.png-0c6b84995c4dddbbc514dc03222be99e.ctex"]
+source_file="res://assets/vfx/brackeys_bundle/alpha/spark_03_a.png"
+dest_files=["res://.godot/imported/spark_03_a.png-02c62fc68750d11dc0fdf2af4e87f684.ctex"]
 
 [params]
 

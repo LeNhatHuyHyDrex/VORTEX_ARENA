@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://ddu4c7seql64y"
-path.s3tc="res://.godot/imported/light_01_a.png-25ac21c321ba97c019224294686ff010.s3tc.ctex"
+path.s3tc="res://.godot/imported/light_01_a.png-1e236f3da7ebb1d8f0c0cb8afea36899.s3tc.ctex"
+path.etc2="res://.godot/imported/light_01_a.png-1e236f3da7ebb1d8f0c0cb8afea36899.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://brackeys_particle_bundle/particles/alpha/light_01_a.png"
-dest_files=["res://.godot/imported/light_01_a.png-25ac21c321ba97c019224294686ff010.s3tc.ctex"]
+source_file="res://assets/vfx/brackeys_bundle/alpha/light_01_a.png"
+dest_files=["res://.godot/imported/light_01_a.png-1e236f3da7ebb1d8f0c0cb8afea36899.s3tc.ctex", "res://.godot/imported/light_01_a.png-1e236f3da7ebb1d8f0c0cb8afea36899.etc2.ctex"]
 
 [params]
 

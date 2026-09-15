@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://mwwd77hlqpf6"
-path="res://.godot/imported/spotlight_06_a.png-7faaf5d44913521d79dfc34a2f122a45.ctex"
+path="res://.godot/imported/spotlight_06_a.png-643053ce4fbb722dfc9d32c0dc7d503b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://brackeys_particle_bundle/particles/alpha/spotlight_06_a.png"
-dest_files=["res://.godot/imported/spotlight_06_a.png-7faaf5d44913521d79dfc34a2f122a45.ctex"]
+source_file="res://assets/vfx/brackeys_bundle/alpha/spotlight_06_a.png"
+dest_files=["res://.godot/imported/spotlight_06_a.png-643053ce4fbb722dfc9d32c0dc7d503b.ctex"]
 
 [params]
 

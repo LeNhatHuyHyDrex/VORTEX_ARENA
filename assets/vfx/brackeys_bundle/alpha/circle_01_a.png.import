@@ -3,16 +3,17 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cxkpdpb1k5dkp"
-path.s3tc="res://.godot/imported/circle_01_a.png-27d764f7a23280aa08fae8b1324cae23.s3tc.ctex"
+path.s3tc="res://.godot/imported/circle_01_a.png-30a5f0418a506e396166f97aaa6e06d2.s3tc.ctex"
+path.etc2="res://.godot/imported/circle_01_a.png-30a5f0418a506e396166f97aaa6e06d2.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
-source_file="res://brackeys_particle_bundle/particles/alpha/circle_01_a.png"
-dest_files=["res://.godot/imported/circle_01_a.png-27d764f7a23280aa08fae8b1324cae23.s3tc.ctex"]
+source_file="res://assets/vfx/brackeys_bundle/alpha/circle_01_a.png"
+dest_files=["res://.godot/imported/circle_01_a.png-30a5f0418a506e396166f97aaa6e06d2.s3tc.ctex", "res://.godot/imported/circle_01_a.png-30a5f0418a506e396166f97aaa6e06d2.etc2.ctex"]
 
 [params]
 
