@@ -505,8 +505,12 @@ func _build_champion() -> void:
 	# KHE CẮM ART: giấy da PNG cho panel chi tiết; thiếu ảnh thì dùng style
 	# kính tối như cũ, cả hai đường đều giữ chữ đọc được.
 	var parchment := ArtLibrary.ui_texture("panel_parchment")
-	if parchment != null:
+	var kenney_panel := ArtLibrary.kenney_ui_texture("fantasy_borders", "panel_brown")
+	if kenney_panel == null:
+		kenney_panel = ArtLibrary.kenney_ui_texture("adventure", "panel_brown")
+	if parchment != null or kenney_panel != null:
 		var parchment_sb := StyleBoxTexture.new()
+		parchment = kenney_panel if kenney_panel != null else parchment
 		parchment_sb.texture = parchment
 		# Phủ lớp tối để chữ trắng vẫn nổi trên nền giấy sáng.
 		parchment_sb.modulate_color = Color(0.32, 0.30, 0.38, 0.94)

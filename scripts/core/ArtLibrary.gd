@@ -33,6 +33,19 @@ static func body_texture(id: StringName) -> Texture2D:
 static func ui_texture(piece: String) -> Texture2D:
 	return _load("ui", piece)
 
+## Optional full-pack UI lookup. This keeps the existing stable art slots intact
+## while allowing selected Kenney panels/buttons to be used without copying 500+
+## files into the core UI folder.
+static func kenney_ui_texture(pack: String, piece: String) -> Texture2D:
+	var roots := [
+		"res://assets/art/ui/kenney_full/%s/PNG/Default/%s.png" % [pack, piece],
+		"res://assets/art/ui/kenney_full/%s/%s.png" % [pack, piece],
+	]
+	for path in roots:
+		if ResourceLoader.exists(path):
+			return load(path) as Texture2D
+	return null
+
 ## Xoá cache — gọi khi người chơi thả ảnh mới vào lúc game đang chạy.
 static func clear_cache() -> void:
 	_cache.clear()
